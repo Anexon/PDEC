@@ -54,6 +54,7 @@ int recordThermalRGBVideo(string destPath);
 int recordThermalRGBVideo(string destRGBPath, string destThermalPath);
 
 int frameStep(string sourcePath);
+
 int frameStep(string sourcePath1, string sourcePath2, int shift);
 
 /**
@@ -76,5 +77,7 @@ int moveToPresetNumber(const int presetNum);
  * Muestra, sobre las imagenes de un video grabado los resultados del feature detection MSER
  */
 int plotMSERfromVideo(string sourcePath);
+
+Mat detectAndPlotMSER(Mat frame, int frameNum);
 
 #endif /* OCULUSTI_H_ */

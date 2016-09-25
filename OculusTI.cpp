@@ -338,6 +338,32 @@ int moveToPresetNumber(const int presetNum){
     return responseStatus;
 }
 
+Mat detectAndPlotMSER(Mat frame, int frameNum){
+
+    Ptr<MSER> ms = MSER::create(5,200);
+    vector< vector<Point> > regions;
+    vector<Rect> boxes;
+
+    string frameText = "frame ";
+    stringstream ss;
+
+    ss << frameText << frameNum;
+
+    putText(frame, ss.str(), Point2f(20, 50), FONT_HERSHEY_SIMPLEX,0.5, Scalar(0,0,255,255));
+
+    if(!frame.empty()) {
+        ms->detectRegions(frame,regions,boxes);
+        for(unsigned j=0; j < boxes.size(); j++){
+            rectangle(frame, boxes[j], CV_RGB(0,255,0));
+        }
+    }
+
+    ss.str("");
+    ss.clear();
+
+    return frame;
+}
+
 int plotMSERfromVideo(string sourcePath){
 	const string WNAME = "Frames captured (RGB | Thermal)";
 	Mat frame;
@@ -363,7 +389,7 @@ int plotMSERfromVideo(string sourcePath){
 
 		if(!frame.empty()) {
 			ms->detectRegions(frame,regions,boxes);
-			for(int j=0; j < boxes.size(); j++){
+            for(unsigned j=0; j < boxes.size(); j++){
 				rectangle(frame, boxes[j], CV_RGB(0,255,0));
 			}
 			imshow(WNAME, frame);
