@@ -10,7 +10,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-
     myPlayer = new Player();
     QObject::connect(myPlayer, SIGNAL(processedImage(QImage)),
                               this, SLOT(updatePlayerUI(QImage)));

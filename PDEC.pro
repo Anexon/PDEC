@@ -37,3 +37,5 @@ DISTFILES += \
     videos/thermalVideo4.avi \
     videos/thermalVideo5.avi \
     videos/Video.avi
+
+RESOURCES     += appResources.qrc
