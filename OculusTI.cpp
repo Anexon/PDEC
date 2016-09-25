@@ -340,7 +340,11 @@ int moveToPresetNumber(const int presetNum){
 
 Mat detectAndPlotMSER(Mat frame, int frameNum){
 
-    Ptr<MSER> ms = MSER::create(5,200);
+    /*
+    Mat croppedFrame;
+    frame(Rect(10,10, frame.cols-10, frame.rows-10)).copyTo(croppedFrame);
+    */
+    Ptr<MSER> ms = MSER::create(1,200,14400,0.3);
     vector< vector<Point> > regions;
     vector<Rect> boxes;
 
@@ -353,8 +357,9 @@ Mat detectAndPlotMSER(Mat frame, int frameNum){
 
     if(!frame.empty()) {
         ms->detectRegions(frame,regions,boxes);
-        for(unsigned j=0; j < boxes.size(); j++){
-            rectangle(frame, boxes[j], CV_RGB(0,255,0));
+        for(unsigned j=0; j < regions.size(); j++){
+            //rectangle(frame, boxes[j], CV_RGB(0,255,0));
+            ellipse(frame, fitEllipse(regions[j]), Scalar(255));
         }
     }
 
@@ -368,7 +373,7 @@ int plotMSERfromVideo(string sourcePath){
 	const string WNAME = "Frames captured (RGB | Thermal)";
 	Mat frame;
 	VideoCapture inputVideo(sourcePath);
-	Ptr<MSER> ms = MSER::create(5,200);
+    Ptr<MSER> ms = MSER::create(1,200,14400,0.3);
 	vector< vector<Point> > regions;
     vector<Rect> boxes;
 

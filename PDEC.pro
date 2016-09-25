@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = PDEC2
+TARGET = PDEC
 TEMPLATE = app
 
 INCLUDEPATH += /user/local/include

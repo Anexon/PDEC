@@ -34,7 +34,15 @@ void MainWindow::updatePlayerUI(QImage img)
 
 void MainWindow::on_exitButton_clicked()
 {
-    qApp->quit();
+    if (myPlayer->isStopped())
+    {
+        myPlayer->Play();
+        ui->exitButton->setText(tr("Pause"));
+    }else
+    {
+        myPlayer->Stop();
+        ui->exitButton->setText(tr("Resume"));
+    }
 }
 
 void MainWindow::on_actionOpen_triggered()

@@ -17,7 +17,7 @@ class Player : public QThread
     Mat frame;
     int frameRate;
     VideoCapture capture;
-    Mat RGBframe;
+    Mat processedFrame;
     QImage img;
  signals:
  //Signal to output frame to be displayed
