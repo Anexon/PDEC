@@ -11,8 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = PDEC
 TEMPLATE = app
 
-INCLUDEPATH += /user/local/include
-LIBS += -L/usr/local/lib -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_flann -lcurl -lopencv_imgproc -lopencv_videoio
+INCLUDEPATH += /user/include
+LIBS += -L/usr/lib -lopencv_core -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_flann -lcurl -lopencv_imgproc
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -24,18 +24,5 @@ HEADERS  += mainwindow.h \
     player.h
 
 FORMS    += mainwindow.ui
-
-DISTFILES += \
-    videos/rgbThermal1.avi \
-    videos/rgbVideo1.avi \
-    videos/rgbVideo2.avi \
-    videos/rgbVideo3.avi \
-    videos/rgbVideo4.avi \
-    videos/rgbVideo5.avi \
-    videos/thermalVideo2.avi \
-    videos/thermalVideo3.avi \
-    videos/thermalVideo4.avi \
-    videos/thermalVideo5.avi \
-    videos/Video.avi
 
 RESOURCES     += appResources.qrc

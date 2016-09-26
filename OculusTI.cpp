@@ -9,13 +9,7 @@
 #define OCULUSTI_H_
 
 #include <opencv2/opencv.hpp>
-#include <opencv2/videoio.hpp>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/features2d.hpp>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/video/tracking.hpp>
+
 
 #include <curl/curl.h>
 
@@ -344,7 +338,7 @@ Mat detectAndPlotMSER(Mat frame, int frameNum){
     Mat croppedFrame;
     frame(Rect(10,10, frame.cols-10, frame.rows-10)).copyTo(croppedFrame);
     */
-    Ptr<MSER> ms = MSER::create(1,200,14400,0.3);
+    MSER ms(1,200,14400,0.3);
     vector< vector<Point> > regions;
     vector<Rect> boxes;
 
@@ -356,7 +350,7 @@ Mat detectAndPlotMSER(Mat frame, int frameNum){
     putText(frame, ss.str(), Point2f(20, 50), FONT_HERSHEY_SIMPLEX,0.5, Scalar(0,0,255,255));
 
     if(!frame.empty()) {
-        ms->detectRegions(frame,regions,boxes);
+        ms.operator()(frame,regions,Mat());
         for(unsigned j=0; j < regions.size(); j++){
             //rectangle(frame, boxes[j], CV_RGB(0,255,0));
             ellipse(frame, fitEllipse(regions[j]), Scalar(255));
@@ -373,7 +367,7 @@ int plotMSERfromVideo(string sourcePath){
 	const string WNAME = "Frames captured (RGB | Thermal)";
 	Mat frame;
 	VideoCapture inputVideo(sourcePath);
-    Ptr<MSER> ms = MSER::create(1,200,14400,0.3);
+    MSER ms(1,200,14400,0.3);
 	vector< vector<Point> > regions;
     vector<Rect> boxes;
 
@@ -392,11 +386,12 @@ int plotMSERfromVideo(string sourcePath){
 		inputVideo >> frame;
 		putText(frame, ss.str(), Point2f(20, 50), FONT_HERSHEY_SIMPLEX,0.5, Scalar(0,0,255,255));
 
-		if(!frame.empty()) {
-			ms->detectRegions(frame,regions,boxes);
-            for(unsigned j=0; j < boxes.size(); j++){
-				rectangle(frame, boxes[j], CV_RGB(0,255,0));
-			}
+        if(!frame.empty()) {
+            ms.operator()(frame,regions,Mat());
+            for(unsigned j=0; j < regions.size(); j++){
+                //rectangle(frame, boxes[j], CV_RGB(0,255,0));
+                ellipse(frame, fitEllipse(regions[j]), Scalar(255));
+            }
 			imshow(WNAME, frame);
 		}
 		if(waitKey(10)>0) break;
