@@ -9,6 +9,7 @@
 #define OCULUSTI_H_
 
 #include <opencv2/opencv.hpp>
+#include <opencv2/nonfree/features2d.hpp>
 
 #include <iostream>
 #include <fstream>
@@ -71,6 +72,31 @@ int moveToPresetNumber(const int presetNum);
  */
 int plotMSERfromVideo(string sourcePath);
 
-Mat detectAndPlotMSER(Mat frame, int frameNum);
+/**
+ * @brief getMSERs Detecta las regiones MSER
+ * @param frame origen
+ * @return MSER regions
+ */
+void getMSERs(Mat frame, vector< vector<Point> > &regions);
+
+/**
+ * @brief plotMSER
+ * @param frame
+ * @param regions
+ * @return Frame origin with ellipses drawed on it
+ */
+void plotMSER(Mat &outputFrame, vector< vector<Point> > regions);
+
+void getSIFTKps(Mat frame, vector<vector<KeyPoint> > &kPointsVect, vector<vector<Point> > regions);
+
+void drawSIFTKps(Mat frame, vector<vector<KeyPoint> > kPointsVect, Mat &processedFrame);
+
+/**
+ * @brief plotFrameNumber
+ * @param frame
+ * @param frameNum
+ * @return Frame with nomber on it
+ */
+void plotFrameNumber(Mat &frame, int frameNum);
 
 #endif /* OCULUSTI_H_ */

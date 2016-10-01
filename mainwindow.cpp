@@ -57,6 +57,7 @@ void MainWindow::on_actionOpen_triggered()
         } else if (myPlayer->isStopped())
         {
             myPlayer->Play();
+            ui->exitButton->setEnabled(true);
         }else
         {
             myPlayer->Stop();
@@ -67,4 +68,27 @@ void MainWindow::on_actionOpen_triggered()
 void MainWindow::on_actionExit_triggered()
 {
     qApp->quit();
+}
+
+void MainWindow::on_checkBox_clicked()
+{
+    if(myPlayer->showFeatureDetector){
+        myPlayer->showFeatureDetector = false;
+    } else {
+        myPlayer->showFeatureDetector = true;
+    }
+}
+
+void MainWindow::on_descriptor_show_clicked()
+{
+    if(myPlayer->showFeatureDescriptor){
+        myPlayer->showFeatureDescriptor = false;
+    } else {
+        myPlayer->showFeatureDescriptor = true;
+    }
+}
+
+void MainWindow::on_descriptor_combobox_activated(const QString &arg1)
+{
+
 }

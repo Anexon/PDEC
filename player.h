@@ -7,6 +7,8 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <QTextStream>
+
 using namespace cv;
 class Player : public QThread
 {    Q_OBJECT
@@ -30,6 +32,9 @@ class Player : public QThread
     Player(QObject *parent = 0);
     //Destructor
     ~Player();
+    // Variables for drawing content
+    bool showFeatureDetector = true;
+    bool showFeatureDescriptor = true;
     //Load a video from memory
     bool loadVideo(String filename);
     //Play the video

@@ -1,10 +1,17 @@
 #include "player.h"
 #include "OculusTI.h"
+#include <QTextStream>
 
 Player::Player(QObject *parent)
  : QThread(parent)
 {
     stop = true;
+}
+
+QTextStream& qStdOut()
+{
+    static QTextStream ts( stdout );
+    return ts;
 }
 
 
@@ -38,10 +45,28 @@ void Player::run()
         {
             stop = true;
         }
-        processedFrame.release();
-        detectAndPlotMSER(frame,frameNum).copyTo(processedFrame);
+        vector<vector<Point> >      regions;
+        vector<vector<KeyPoint> >   kPointsVect;
 
-        if (frame.channels()== 3){
+        // Iniciamos la imagen procesada
+        frame.copyTo(processedFrame);
+
+        if(showFeatureDetector){
+            // Get MSER Regions and plot them into processed frame
+            getMSERs(frame, regions);
+            plotMSER(processedFrame, regions);
+        }
+
+        if(showFeatureDescriptor){
+            // Get Descritors from SIFT Descriptor and draw keypoints into processed frame
+            getSIFTKps(frame, kPointsVect, regions);
+            drawSIFTKps(processedFrame, kPointsVect, processedFrame);
+        }
+
+        // Draw frame number
+        plotFrameNumber(processedFrame, frameNum);
+
+        if (processedFrame.channels()== 3){
             cv::cvtColor(processedFrame, processedFrame, CV_BGR2RGB);
             img = QImage((const unsigned char*)(processedFrame.data),
                               processedFrame.cols,processedFrame.rows,QImage::Format_RGB888);
@@ -49,13 +74,15 @@ void Player::run()
         else
         {
             img = QImage((const unsigned char*)(processedFrame.data),
-                                 processedFrame.cols,processedFrame.rows,QImage::Format_Indexed8);
+                         processedFrame.cols,processedFrame.rows,QImage::Format_Indexed8);
         }
-
+        // Clear processed frame for the next step
+        processedFrame.release();
         emit processedImage(img);
         frameNum++;
         this->msleep(delay);
-    }
+    }  
+    //processedFrame.release();
 }
 
 Player::~Player()

@@ -9,7 +9,7 @@
 #define OCULUSTI_H_
 
 #include <opencv2/opencv.hpp>
-
+#include <opencv2/nonfree/features2d.hpp>
 
 #include <curl/curl.h>
 
@@ -332,36 +332,60 @@ int moveToPresetNumber(const int presetNum){
     return responseStatus;
 }
 
-Mat detectAndPlotMSER(Mat frame, int frameNum){
+void getMSERs(Mat frame, vector< vector<Point> > &regions){
 
-    /*
-    Mat croppedFrame;
-    frame(Rect(10,10, frame.cols-10, frame.rows-10)).copyTo(croppedFrame);
-    */
     MSER ms(1,200,14400,0.3);
-    vector< vector<Point> > regions;
-    vector<Rect> boxes;
-
-    string frameText = "frame ";
-    stringstream ss;
-
-    ss << frameText << frameNum;
-
-    putText(frame, ss.str(), Point2f(20, 50), FONT_HERSHEY_SIMPLEX,0.5, Scalar(0,0,255,255));
+    //vector< vector<Point> > regions;
 
     if(!frame.empty()) {
         ms.operator()(frame,regions,Mat());
+    }
+}
+
+void plotMSER(Mat &outputFrame, vector< vector<Point> > regions){
+    if(!outputFrame.empty()){
         for(unsigned j=0; j < regions.size(); j++){
             //rectangle(frame, boxes[j], CV_RGB(0,255,0));
-            ellipse(frame, fitEllipse(regions[j]), Scalar(255));
+            ellipse(outputFrame, fitEllipse(regions[j]), Scalar(255));
         }
     }
+}
 
+void plotFrameNumber(Mat &frame, int frameNum){
+    string frameText = "frame ";
+    stringstream ss;
+    if(!frame.empty()){
+        ss << frameText << frameNum;
+        putText(frame, ss.str(), Point2f(20, 50), FONT_HERSHEY_SIMPLEX,0.5, Scalar(0,0,255,255));
+    }
     ss.str("");
     ss.clear();
-
-    return frame;
 }
+
+void getSIFTKps(Mat frame, vector<vector<KeyPoint> > &kPointsVect, vector<vector<Point> > regions){
+    if( !frame.empty()){
+        SiftFeatureDetector sift;
+
+        for(unsigned i = 0; i < regions.size(); i++){
+            if(!regions[i].empty()){
+                Mat mask(frame.size(), CV_8UC1, Scalar::all(0));
+                mask(boundingRect(regions[i])).setTo(Scalar::all(255));
+                vector<KeyPoint> extraKeyPoint;
+
+                sift.detect(frame, extraKeyPoint, mask);
+                kPointsVect.push_back(extraKeyPoint);
+            }
+        }
+    }
+}
+
+void drawSIFTKps(Mat frame, vector<vector<KeyPoint> > kPointsVect, Mat &processedFrame){
+    for(unsigned i = 0; i < kPointsVect.size(); i++){
+        drawKeypoints(frame, kPointsVect[i], processedFrame, Scalar::all(-1),
+                      DrawMatchesFlags().DRAW_RICH_KEYPOINTS );
+    }
+}
+
 
 int plotMSERfromVideo(string sourcePath){
 	const string WNAME = "Frames captured (RGB | Thermal)";

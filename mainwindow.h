@@ -27,6 +27,12 @@ private slots:
 
     void on_actionExit_triggered();
 
+    void on_checkBox_clicked();
+
+    void on_descriptor_combobox_activated(const QString &arg1);
+
+    void on_descriptor_show_clicked();
+
 private:
     Ui::MainWindow *ui;
     Player* myPlayer;

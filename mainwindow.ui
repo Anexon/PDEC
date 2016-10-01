@@ -76,6 +76,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="exitButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Stop</string>
          </property>
@@ -91,24 +94,62 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QComboBox" name="comboBox">
-         <item>
-          <property name="text">
-           <string>&lt; Feature Detector &gt;</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>MSER</string>
-          </property>
-         </item>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>Feature Detector</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,0">
+          <item>
+           <widget class="QComboBox" name="comboBox">
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>MSER</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton">
-         <property name="text">
-          <string>&lt;Not Defined&gt;</string>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Feature Descriptor</string>
          </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0">
+          <item>
+           <widget class="QComboBox" name="descriptor_combobox">
+            <item>
+             <property name="text">
+              <string>SIFT</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="descriptor_show">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
