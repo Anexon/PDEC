@@ -33,6 +33,10 @@ private slots:
 
     void on_descriptor_show_clicked();
 
+    void on_subsampleRateCheckBox_clicked(bool checked);
+
+    void on_subsampleRate_valueChanged(int arg1);
+
 private:
     Ui::MainWindow *ui;
     Player* myPlayer;

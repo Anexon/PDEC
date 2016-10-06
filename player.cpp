@@ -41,46 +41,60 @@ void Player::run()
     int delay = (1000/frameRate);
     int frameNum = 0;
     while(!stop){
+        // Read frame
         if (!capture.read(frame))
         {
             stop = true;
         }
-        vector<vector<Point> >      regions;
-        vector<vector<KeyPoint> >   kPointsVect;
 
-        // Iniciamos la imagen procesada
-        frame.copyTo(processedFrame);
-
-        if(showFeatureDetector){
-            // Get MSER Regions and plot them into processed frame
-            getMSERs(frame, regions);
-            plotMSER(processedFrame, regions);
+        // Assures not dividing by zero
+        if(subsampleRate == 0){
+            subsampleRate += 1;
+        } else if(!subsampleRateCheck){
+            subsampleRate = 1;
         }
 
-        if(showFeatureDescriptor){
-            // Get Descritors from SIFT Descriptor and draw keypoints into processed frame
-            getSIFTKps(frame, kPointsVect, regions);
-            drawSIFTKps(processedFrame, kPointsVect, processedFrame);
+        if( frameNum % subsampleRate == 0 || frameNum == 0){
+            vector<vector<Point> >      regions;
+            vector<vector<KeyPoint> >   kPointsVect;
+
+            // Iniciamos la imagen procesada
+            frame.copyTo(processedFrame);
+
+            // Show feature detector if checkButton is checked
+            if(showFeatureDetector){
+                // Get MSER Regions and plot them into processed frame
+                getMSERs(frame, regions);
+                plotMSER(processedFrame, regions);
+            }
+
+            // Show feature descriptor if checkButton is checked
+            if(showFeatureDescriptor){
+                // Get Descritors from SIFT Descriptor and draw keypoints into processed frame
+                getSIFTKps(frame, kPointsVect, regions);
+                drawSIFTKps(processedFrame, kPointsVect, processedFrame);
+            }
+
+            // Draw frame number
+            plotFrameNumber(processedFrame, frameNum);
+            if (processedFrame.channels()== 3){
+                cv::cvtColor(processedFrame, processedFrame, CV_BGR2RGB);
+                img = QImage((const unsigned char*)(processedFrame.data),
+                                  processedFrame.cols,processedFrame.rows,QImage::Format_RGB888);
+            }
+            else
+            {
+                img = QImage((const unsigned char*)(processedFrame.data),
+                             processedFrame.cols,processedFrame.rows,QImage::Format_Indexed8);
+            }
+            // Clear processed frame for the next step
+            processedFrame.release();
         }
 
-        // Draw frame number
-        plotFrameNumber(processedFrame, frameNum);
-
-        if (processedFrame.channels()== 3){
-            cv::cvtColor(processedFrame, processedFrame, CV_BGR2RGB);
-            img = QImage((const unsigned char*)(processedFrame.data),
-                              processedFrame.cols,processedFrame.rows,QImage::Format_RGB888);
-        }
-        else
-        {
-            img = QImage((const unsigned char*)(processedFrame.data),
-                         processedFrame.cols,processedFrame.rows,QImage::Format_Indexed8);
-        }
-        // Clear processed frame for the next step
-        processedFrame.release();
+        // Notify to UI proccessed img
         emit processedImage(img);
         frameNum++;
-        this->msleep(delay);
+        this->msleep(delay/subsampleRate);
     }  
     //processedFrame.release();
 }

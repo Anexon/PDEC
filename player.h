@@ -35,6 +35,8 @@ class Player : public QThread
     // Variables for drawing content
     bool showFeatureDetector = true;
     bool showFeatureDescriptor = true;
+    int subsampleRate = 0;
+    bool subsampleRateCheck = false;
     //Load a video from memory
     bool loadVideo(String filename);
     //Play the video

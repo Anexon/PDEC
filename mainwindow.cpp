@@ -92,3 +92,18 @@ void MainWindow::on_descriptor_combobox_activated(const QString &arg1)
 {
 
 }
+
+void MainWindow::on_subsampleRateCheckBox_clicked(bool checked)
+{
+    myPlayer->subsampleRateCheck = checked;
+    if(checked){
+        myPlayer->subsampleRate = ui->subsampleRate->value();
+    } else {
+        myPlayer->subsampleRate = 0;
+    }
+}
+
+void MainWindow::on_subsampleRate_valueChanged(int arg1)
+{
+    myPlayer->subsampleRate = arg1;
+}
