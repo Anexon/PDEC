@@ -17,6 +17,8 @@ class Player : public QThread
     QMutex mutex;
     QWaitCondition condition;
     Mat frame;
+    Mat frameResized;
+    Mat frameCropped;
     int frameRate;
     VideoCapture capture;
     Mat processedFrame;
@@ -33,6 +35,7 @@ class Player : public QThread
     //Destructor
     ~Player();
     // Variables for drawing content
+    Size frameSize = Size(320,200);
     bool showFeatureDetector = true;
     bool showFeatureDescriptor = true;
     int subsampleRate = 0;

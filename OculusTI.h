@@ -77,7 +77,7 @@ int plotMSERfromVideo(string sourcePath);
  * @param frame origen
  * @return MSER regions
  */
-void getMSERs(Mat frame, vector< vector<Point> > &regions);
+void getMSERs(Mat frame, float mThreshold, vector< vector<Point> > &regions);
 
 /**
  * @brief plotMSER
@@ -98,5 +98,7 @@ void drawSIFTKps(Mat frame, vector<vector<KeyPoint> > kPointsVect, Mat &processe
  * @return Frame with nomber on it
  */
 void plotFrameNumber(Mat &frame, int frameNum);
+
+void loadSVM();
 
 #endif /* OCULUSTI_H_ */

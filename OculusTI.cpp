@@ -332,13 +332,27 @@ int moveToPresetNumber(const int presetNum){
     return responseStatus;
 }
 
-void getMSERs(Mat frame, vector< vector<Point> > &regions){
+void getMSERs(Mat frame, float mThreshold, vector< vector<Point> > &regions){
 
-    MSER ms(1,200,14400,0.3);
+    MSER ms(1,100,120,0.25);
     //vector< vector<Point> > regions;
 
     if(!frame.empty()) {
-        ms.operator()(frame,regions,Mat());
+        vector< vector<Point> > obtainedRegions;
+        ms.operator()(frame,obtainedRegions,Mat());
+
+        // Calculate mean for every region and if its below the threshold it is added to the final regions vector
+        for(unsigned j=0; j < obtainedRegions.size(); j++){
+            vector<Scalar> intensityRegion;
+            for(unsigned i=0; i < obtainedRegions[j].size(); i++){
+                intensityRegion.push_back( frame.at<uchar>(obtainedRegions[j][i]) );
+                //cout << "MEAN " << (Scalar)frame.at<uchar>(obtainedRegions[j][i]);
+            }
+
+            if( mean(intensityRegion)[0] > mThreshold ){
+                regions.push_back(obtainedRegions[j]);
+            }
+        }
     }
 }
 
@@ -356,7 +370,7 @@ void plotFrameNumber(Mat &frame, int frameNum){
     stringstream ss;
     if(!frame.empty()){
         ss << frameText << frameNum;
-        putText(frame, ss.str(), Point2f(20, 50), FONT_HERSHEY_SIMPLEX,0.5, Scalar(0,0,255,255));
+        putText(frame, ss.str(), Point2f(10, 10), FONT_HERSHEY_SIMPLEX,0.5, Scalar(0,0,255,255));
     }
     ss.str("");
     ss.clear();
@@ -396,7 +410,7 @@ int plotMSERfromVideo(string sourcePath){
     vector<Rect> boxes;
 
 	if(!inputVideo.isOpened()){
-				cout << "File cannot be opened!";
+                cout << "File cannot be opened!";
 				return -1;
 	}
 
@@ -424,6 +438,25 @@ int plotMSERfromVideo(string sourcePath){
 	}
 
 	return 0;
+}
+
+void loadSVM(){
+    vector< vector<Point> > regions;
+    vector< vector<KeyPoint> > kPoints;
+
+    Mat image;
+    int i = 1;
+    String path = format("img_%05d.bmp", i);
+    image = imread(path, CV_LOAD_IMAGE_GRAYSCALE);
+
+    while(image.empty()){
+        getMSERs(image, 100, regions);
+        getSIFTKps(image, kPoints, regions);
+
+        i++;
+        path = format("img_%05d.bmp", 5);
+        image = imread(path, CV_LOAD_IMAGE_GRAYSCALE);
+    }
 }
 
 

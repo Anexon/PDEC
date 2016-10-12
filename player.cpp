@@ -58,20 +58,25 @@ void Player::run()
             vector<vector<Point> >      regions;
             vector<vector<KeyPoint> >   kPointsVect;
 
-            // Iniciamos la imagen procesada
-            frame.copyTo(processedFrame);
+            // Start up precessed Frame
+            resize(frame,frameResized, frameSize);
+            // Define margin of 5% for every sides
+            Rect myROI = Rect(frameSize.width*0.05, frameSize.height*0.05, (int)frameSize.width*0.9, (int)frameSize.height*0.9);
+            frameResized(myROI).copyTo(frameCropped);
+            frameCropped.copyTo(processedFrame);
 
             // Show feature detector if checkButton is checked
             if(showFeatureDetector){
                 // Get MSER Regions and plot them into processed frame
-                getMSERs(frame, regions);
+                float myThreshold = 60;
+                getMSERs(frameCropped, myThreshold, regions);
                 plotMSER(processedFrame, regions);
             }
 
             // Show feature descriptor if checkButton is checked
             if(showFeatureDescriptor){
                 // Get Descritors from SIFT Descriptor and draw keypoints into processed frame
-                getSIFTKps(frame, kPointsVect, regions);
+                getSIFTKps(frameCropped, kPointsVect, regions);
                 drawSIFTKps(processedFrame, kPointsVect, processedFrame);
             }
 
