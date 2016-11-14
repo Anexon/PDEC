@@ -17,11 +17,17 @@ LIBS += -L/usr/lib -lopencv_core -lopencv_highgui -lopencv_ml -lopencv_video -lo
 SOURCES += main.cpp\
         mainwindow.cpp \
     OculusTI.cpp \
-    player.cpp
+    player.cpp \
+    mysvm.cpp \
+    mymser.cpp \
+    mysift.cpp
 
 HEADERS  += mainwindow.h \
     OculusTI.h \
-    player.h
+    player.h \
+    mysvm.h \
+    mymser.h \
+    mysift.h
 
 FORMS    += mainwindow.ui
 

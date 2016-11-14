@@ -37,6 +37,8 @@ private slots:
 
     void on_subsampleRate_valueChanged(int arg1);
 
+    void on_actionTrain_SVM_triggered();
+
 private:
     Ui::MainWindow *ui;
     Player* myPlayer;

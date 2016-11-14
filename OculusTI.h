@@ -77,7 +77,7 @@ int plotMSERfromVideo(string sourcePath);
  * @param frame origen
  * @return MSER regions
  */
-void getMSERs(Mat frame, float mThreshold, vector< vector<Point> > &regions);
+void getMSERs(Mat &frame, float mThreshold, vector< vector<Point> > &regions);
 
 /**
  * @brief plotMSER
@@ -85,7 +85,7 @@ void getMSERs(Mat frame, float mThreshold, vector< vector<Point> > &regions);
  * @param regions
  * @return Frame origin with ellipses drawed on it
  */
-void plotMSER(Mat &outputFrame, vector< vector<Point> > regions);
+void plotMSER(Mat frame, vector< vector<Point> > regions, Mat &processedFrame);
 
 void getSIFTKps(Mat frame, vector<vector<KeyPoint> > &kPointsVect, vector<vector<Point> > regions);
 
@@ -97,7 +97,7 @@ void drawSIFTKps(Mat frame, vector<vector<KeyPoint> > kPointsVect, Mat &processe
  * @param frameNum
  * @return Frame with nomber on it
  */
-void plotFrameNumber(Mat &frame, int frameNum);
+void plotFrameNumber(Mat frame, int frameNum, Mat &processedFrame);
 
 void loadSVM();
 

@@ -5,6 +5,8 @@
 Player::Player(QObject *parent)
  : QThread(parent)
 {
+    myMSER = MyMSER(4,60,600,0.25);
+    mySIFT = MySIFT();
     stop = true;
 }
 
@@ -68,20 +70,20 @@ void Player::run()
             // Show feature detector if checkButton is checked
             if(showFeatureDetector){
                 // Get MSER Regions and plot them into processed frame
-                float myThreshold = 60;
-                getMSERs(frameCropped, myThreshold, regions);
-                plotMSER(processedFrame, regions);
+                float myThreshold = 150;
+                myMSER.getMSERs(processedFrame, myThreshold, regions);
+                myMSER.plotMSER(frameCropped, regions, processedFrame);
             }
 
             // Show feature descriptor if checkButton is checked
             if(showFeatureDescriptor){
                 // Get Descritors from SIFT Descriptor and draw keypoints into processed frame
-                getSIFTKps(frameCropped, kPointsVect, regions);
-                drawSIFTKps(processedFrame, kPointsVect, processedFrame);
+                mySIFT.getSIFTKps(frameCropped, kPointsVect, regions);
+                mySIFT.drawSIFTKps(processedFrame, kPointsVect, processedFrame);
             }
 
             // Draw frame number
-            plotFrameNumber(processedFrame, frameNum);
+            //plotFrameNumber(processedFrame, frameNum, processedFrame);
             if (processedFrame.channels()== 3){
                 cv::cvtColor(processedFrame, processedFrame, CV_BGR2RGB);
                 img = QImage((const unsigned char*)(processedFrame.data),
@@ -94,6 +96,8 @@ void Player::run()
             }
             // Clear processed frame for the next step
             processedFrame.release();
+            frameCropped.release();
+            frameResized.release();
         }
 
         // Notify to UI proccessed img

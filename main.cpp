@@ -29,13 +29,13 @@ int main(int argc, char ** argv){
 
     QApplication app (argc, argv);
 
-     MainWindow window;
+    MainWindow window;
 
-     window.setAttribute(Qt::WA_DeleteOnClose, true);
-     window.show();
+    window.setAttribute(Qt::WA_DeleteOnClose, true);
+    window.show();
 
-     return app.exec();
-    int result = 0;
+    return app.exec();
+    //int result = 0;
     /*
     pthread_t threads[2];
     int rc1 = pthread_create(&threads[0], NULL, record, (void *)0);
@@ -52,5 +52,5 @@ int main(int argc, char ** argv){
     //result = moveToPTZ(10,0,0);
     //result = moveToPresetNumber(1);
 
-    return result;
+    //return result;
 }

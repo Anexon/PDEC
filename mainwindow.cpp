@@ -107,3 +107,9 @@ void MainWindow::on_subsampleRate_valueChanged(int arg1)
 {
     myPlayer->subsampleRate = arg1;
 }
+
+void MainWindow::on_actionTrain_SVM_triggered()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), QString(),
+            tr("Text Files (*.avi *.mpg *.mp4)"));
+}

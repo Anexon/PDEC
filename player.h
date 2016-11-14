@@ -8,21 +8,26 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <QTextStream>
+#include <mymser.h>
+#include <mysift.h>
 
 using namespace cv;
 class Player : public QThread
 {    Q_OBJECT
  private:
-    bool stop;
-    QMutex mutex;
-    QWaitCondition condition;
-    Mat frame;
-    Mat frameResized;
-    Mat frameCropped;
-    int frameRate;
-    VideoCapture capture;
-    Mat processedFrame;
-    QImage img;
+     bool stop;
+     QMutex mutex;
+     QWaitCondition condition;
+     Mat frame;
+     Mat frameResized;
+     Mat frameCropped;
+     int frameRate;
+     VideoCapture capture;
+     Mat processedFrame;
+     QImage img;
+
+     MyMSER myMSER;
+     MySIFT mySIFT;
  signals:
  //Signal to output frame to be displayed
       void processedImage(const QImage &image);
