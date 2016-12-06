@@ -17,6 +17,7 @@ bool MySVM::loadDataset(string filename){
 }
 
 void MySVM::train(string datasetFileName){
+    // Update ProgressBar
     this->datasetFileName = datasetFileName;
     if(!isRunning()){
         start(LowPriority);
@@ -29,15 +30,15 @@ void MySVM::run(){
     MySIFT mySIFT = MySIFT();
 
     if(loadDataset(datasetFileName)){
+        cout << "Initializing SVM training...\n";
         Mat frame;
-        // Global Characteristics Vector
+        // Global Descriptor Vector
         Mat globalDescriptorVector;
 
         // Update ProgressBar
         emit updateProgress(10, "Training SVM... ("+QString::number(10)+"%)");
 
         for(int I = 0; I < datasetSize; I++){
-            cout << "Aqui \n";
             inputVideo >> frame;
             // Get MSER regions
             vector<vector<Point> > regions;
@@ -58,7 +59,7 @@ void MySVM::run(){
             descriptors.clear();
             kPointsVect.clear();
         }
-        cout << "Global Characteristics Vectors Size -> " << globalDescriptorVector.size() << "\n";
+        cout << "Global Descriptors Vector Size -> " << globalDescriptorVector.size() << "\n";
 
         // Update ProgressBar
         emit updateProgress(60, "Training SVM... ("+QString::number(60)+"%)");
@@ -86,9 +87,18 @@ void MySVM::run(){
         // Train the SVM
         this->svm.train(globalDescriptorVector, labels, Mat(), Mat(), params);
 
+        cout << "Training finished. \n";
         // Update ProgressBar
         emit updateProgress(100, "SVM trained successfully!");
     }
+}
+
+void MySVM::predictRegions(Mat descriptors, float &predictions){
+    vector<float> result;
+    for(int K = 0; K<descriptors.rows; K++){
+        result.push_back(this->svm.predict(descriptors.row(K)));
+    }
+    predictions = mean(result)[0];
 }
 
 MySVM::~MySVM()

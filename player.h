@@ -10,6 +10,7 @@
 #include <QTextStream>
 #include <mymser.h>
 #include <mysift.h>
+#include <mysvm.h>
 
 using namespace cv;
 class Player : public QThread
@@ -28,6 +29,9 @@ class Player : public QThread
 
      MyMSER myMSER;
      MySIFT mySIFT;
+     MySVM* mySVM;
+
+     void plotPredictedRegions(Mat frame, vector<Point> regions, vector<bool> predictions, Mat &processedFrame);
  signals:
  //Signal to output frame to be displayed
       void processedImage(const QImage &image);
@@ -43,10 +47,13 @@ class Player : public QThread
     Size frameSize = Size(640,480);
     bool showFeatureDetector = true;
     bool showFeatureDescriptor = true;
-    int subsampleRate = 0;
     bool subsampleRateCheck = false;
+    int subsampleRate = 0;
+
     //Load a video from memory
     bool loadVideo(String filename);
+    //Set SVM reference
+    void setSVM(MySVM* mySVM);
     //Play the video
     void Play();
     //Stop the video

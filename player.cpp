@@ -42,12 +42,15 @@ void Player::run()
 {
     int delay = (1000/frameRate);
     int frameNum = 0;
+
+
+    // Read frame
+    if (!capture.read(frame))
+    {
+        stop = true;
+    }
+    // MainLoop
     while(!stop){
-        // Read frame
-        if (!capture.read(frame))
-        {
-            stop = true;
-        }
 
         // Assures not dividing by zero
         if(subsampleRate == 0){
@@ -60,40 +63,64 @@ void Player::run()
             vector<vector<Point> >      regions;
             vector<vector<KeyPoint> >   kPointsVect;
             vector<Mat>                 descriptors;
+            vector<bool>                predictions;
 
-            // Start up precessed Frame
+            // Start up processed Frame
             resize(frame,frameResized, frameSize);
+
             // Define margin of 5% for every sides
             Rect myROI = Rect(frameSize.width*0.05, frameSize.height*0.05, (int)frameSize.width*0.9, (int)frameSize.height*0.9);
             frameResized(myROI).copyTo(frameCropped);
             frameCropped.copyTo(processedFrame);
 
+
+            // Get MSER Regions
+            cout << "Extracting MSERs...\n";
+            myMSER.getMSERs(processedFrame, regions);
             // Show feature detector if checkButton is checked
             if(showFeatureDetector){
-                // Get MSER Regions and plot them into processed frame
-                myMSER.getMSERs(processedFrame, regions);
                 myMSER.plotMSER(frameCropped, regions, processedFrame);
             }
 
+            // Get Descritors from SIFT Descriptor and draw keypoints into processed frame
+            cout << "Extracting SIFT descriptors...\n";
+            mySIFT.getSIFTKps(frameCropped, kPointsVect, descriptors, regions);
             // Show feature descriptor if checkButton is checked
             if(showFeatureDescriptor){
-                // Get Descritors from SIFT Descriptor and draw keypoints into processed frame
-                mySIFT.getSIFTKps(frameCropped, kPointsVect, descriptors, regions);
                 mySIFT.drawSIFTKps(processedFrame, kPointsVect, processedFrame);
             }
 
+            // Predict detected regions
+            cout << "Predicting detected regions...\n";
+            cout << "Descriptors Vectors Size: " << descriptors.size() << "\n";
+            for(unsigned K=0; K < descriptors.size(); K++){
+                if(descriptors[K].rows > 0){
+                    float prediction;
+                    mySVM->predictRegions(descriptors[K], prediction);
+                    /**
+                     * If most of the descriptors are tagged as possitive
+                     * lets say this region is a human
+                     */
+                    if( prediction >= 0,5 ) predictions.push_back(true);
+                    else predictions.push_back(false);
+                }
+                plotPredictedRegions(processedFrame, regions[K], predictions, processedFrame);
+                predictions.clear();
+            }
+            //plotPredictedRegions(processedFrame, regions, predictions, processedFrame);
             // Draw frame number
             //plotFrameNumber(processedFrame, frameNum, processedFrame);
+
+            // Convert to QImage to plot into the UI Window
             if (processedFrame.channels()== 3){
                 cv::cvtColor(processedFrame, processedFrame, CV_BGR2RGB);
                 img = QImage((const unsigned char*)(processedFrame.data),
                                   processedFrame.cols,processedFrame.rows,QImage::Format_RGB888);
-            }
-            else
-            {
+            } else {
                 img = QImage((const unsigned char*)(processedFrame.data),
                              processedFrame.cols,processedFrame.rows,QImage::Format_Indexed8);
             }
+
             // Clear processed frame for the next step
             processedFrame.release();
             frameCropped.release();
@@ -104,8 +131,36 @@ void Player::run()
         emit processedImage(img);
         frameNum++;
         this->msleep(delay/subsampleRate);
+
+        // Read frame
+        if (!capture.read(frame))
+        {
+            stop = true;
+        }
     }  
-    //processedFrame.release();
+    processedFrame.release();
+}
+
+void Player::plotPredictedRegions(Mat frame, vector<Point> regions, vector<bool> predictions, Mat &processedFrame){
+    if(!frame.empty()) {
+        cout << "Drawing predicted regions...\n";
+        for(unsigned j=0; j < regions.size(); j++){
+            //for(unsigned i=0; i < regions[j].size(); i++){
+                int color = 0;
+                if(predictions[j]) color = 255;
+                Vec3b intensity;
+                intensity.val[0] = 0;
+                intensity.val[1] = 0;
+                intensity.val[2] = color;
+                //intensit.val[0] = color
+                frame.at<Vec3b>(regions[j]) = intensity;
+            //}
+        }
+    }
+}
+
+void Player::setSVM(MySVM* mySVM){
+    this->mySVM = mySVM;
 }
 
 Player::~Player()

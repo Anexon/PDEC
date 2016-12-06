@@ -12,14 +12,16 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     myPlayer = new Player();
     mySVM = new MySVM();
+    myPlayer->setSVM(mySVM);
 
+    // Define connections between entities
     QObject::connect(myPlayer, SIGNAL(processedImage(QImage)),
                               this, SLOT(updatePlayerUI(QImage)));
     QObject::connect(mySVM, SIGNAL(updateProgress(int, QString)), this, SLOT(updateProgressBar(int, QString)));
     ui->setupUi(this);
-
-    ui->progressBar->setEnabled(false);
     ui->progressBar->setValue(0);
+    ui->progressBar->setMaximum(100);
+    ui->progressBar->setMinimum(0);
 }
 
 MainWindow::~MainWindow()
@@ -44,9 +46,12 @@ void MainWindow::updateProgressBar(int completionPercent, QString format)
     ui->progressBar->setFormat(format);
     if(completionPercent < 100){
         ui->progressBar->setValue(completionPercent);
+        ui->progressBar->show();
     } else {
         ui->progressBar->setValue(100);
-        ui->progressBar->setEnabled(false);
+        //struct timespec ts = { 1000 / 1000, (1000 % 1000) * 1000 * 1000 };
+        //nanosleep(&ts, NULL);
+        //ui->progressBar->hide();
     }
 }
 
@@ -128,10 +133,7 @@ void MainWindow::on_subsampleRate_valueChanged(int arg1)
 
 void MainWindow::on_actionTrain_SVM_triggered()
 {
-    ui->progressBar->setEnabled(true);
     ui->progressBar->setValue(0);
-    ui->progressBar->setMaximum(100);
-    ui->progressBar->setMinimum(100);
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), QString(),
             tr("Text Files (*.avi *.mpg *.mp4)"));
     mySVM->train(fileName.toLocal8Bit().data());
