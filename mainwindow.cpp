@@ -11,9 +11,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     myPlayer = new Player();
+    mySVM = new MySVM();
+
     QObject::connect(myPlayer, SIGNAL(processedImage(QImage)),
                               this, SLOT(updatePlayerUI(QImage)));
+    QObject::connect(mySVM, SIGNAL(updateProgress(int, QString)), this, SLOT(updateProgressBar(int, QString)));
     ui->setupUi(this);
+
+    ui->progressBar->setEnabled(false);
+    ui->progressBar->setValue(0);
 }
 
 MainWindow::~MainWindow()
@@ -29,6 +35,18 @@ void MainWindow::updatePlayerUI(QImage img)
         ui->label->setAlignment(Qt::AlignCenter);
         ui->label->setPixmap(QPixmap::fromImage(img).scaled(ui->label->size(),
                                            Qt::KeepAspectRatio, Qt::FastTransformation));
+    }
+}
+
+void MainWindow::updateProgressBar(int completionPercent, QString format)
+{
+
+    ui->progressBar->setFormat(format);
+    if(completionPercent < 100){
+        ui->progressBar->setValue(completionPercent);
+    } else {
+        ui->progressBar->setValue(100);
+        ui->progressBar->setEnabled(false);
     }
 }
 
@@ -110,6 +128,11 @@ void MainWindow::on_subsampleRate_valueChanged(int arg1)
 
 void MainWindow::on_actionTrain_SVM_triggered()
 {
+    ui->progressBar->setEnabled(true);
+    ui->progressBar->setValue(0);
+    ui->progressBar->setMaximum(100);
+    ui->progressBar->setMinimum(100);
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), QString(),
             tr("Text Files (*.avi *.mpg *.mp4)"));
+    mySVM->train(fileName.toLocal8Bit().data());
 }

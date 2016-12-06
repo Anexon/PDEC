@@ -47,6 +47,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QProgressBar" name="progressBar">
+         <property name="value">
+          <number>24</number>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="exitButton">
          <property name="enabled">
           <bool>false</bool>

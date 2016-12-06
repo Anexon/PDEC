@@ -5,7 +5,7 @@
 Player::Player(QObject *parent)
  : QThread(parent)
 {
-    myMSER = MyMSER(4,60,600,0.25);
+    myMSER = MyMSER(4,60,600,0.25,150);
     mySIFT = MySIFT();
     stop = true;
 }
@@ -59,6 +59,7 @@ void Player::run()
         if( frameNum % subsampleRate == 0 || frameNum == 0){
             vector<vector<Point> >      regions;
             vector<vector<KeyPoint> >   kPointsVect;
+            vector<Mat>                 descriptors;
 
             // Start up precessed Frame
             resize(frame,frameResized, frameSize);
@@ -70,15 +71,14 @@ void Player::run()
             // Show feature detector if checkButton is checked
             if(showFeatureDetector){
                 // Get MSER Regions and plot them into processed frame
-                float myThreshold = 150;
-                myMSER.getMSERs(processedFrame, myThreshold, regions);
+                myMSER.getMSERs(processedFrame, regions);
                 myMSER.plotMSER(frameCropped, regions, processedFrame);
             }
 
             // Show feature descriptor if checkButton is checked
             if(showFeatureDescriptor){
                 // Get Descritors from SIFT Descriptor and draw keypoints into processed frame
-                mySIFT.getSIFTKps(frameCropped, kPointsVect, regions);
+                mySIFT.getSIFTKps(frameCropped, kPointsVect, descriptors, regions);
                 mySIFT.drawSIFTKps(processedFrame, kPointsVect, processedFrame);
             }
 

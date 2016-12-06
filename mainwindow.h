@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QApplication>
 #include <player.h>
+#include <mysvm.h>
 
 namespace Ui {
 class MainWindow;
@@ -20,6 +21,9 @@ public:
 private slots:
     //Display video frame in player UI
     void updatePlayerUI(QImage img);
+
+    // Update progressBar
+    void updateProgressBar(int completionPercent, QString format);
 
     void on_exitButton_clicked();
 
@@ -42,6 +46,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     Player* myPlayer;
+    MySVM* mySVM;
 };
 
 #endif // MAINWINDOW_H

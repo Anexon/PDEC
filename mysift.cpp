@@ -12,7 +12,7 @@ MySIFT::MySIFT()
 
 }
 
-void MySIFT::getSIFTKps(Mat frame, vector<vector<KeyPoint> > &kPointsVect, vector<vector<Point> > regions){
+void MySIFT::getSIFTKps(Mat frame, vector<vector<KeyPoint> > &kPointsVect, vector<Mat> &descriptors, vector<vector<Point> > regions){
     if( !frame.empty()){
         SiftFeatureDetector sift;
 
@@ -21,9 +21,11 @@ void MySIFT::getSIFTKps(Mat frame, vector<vector<KeyPoint> > &kPointsVect, vecto
                 Mat mask(frame.size(), CV_8UC1, Scalar::all(0));
                 mask(boundingRect(regions[i])).setTo(Scalar::all(255));
                 vector<KeyPoint> extraKeyPoint;
-
+                Mat descriptor;
                 sift.detect(frame, extraKeyPoint, mask);
+                sift.compute(frame,extraKeyPoint, descriptor);
                 kPointsVect.push_back(extraKeyPoint);
+                descriptors.push_back(descriptor);
             }
         }
     }

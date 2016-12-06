@@ -40,7 +40,7 @@ class Player : public QThread
     //Destructor
     ~Player();
     // Variables for drawing content
-    Size frameSize = Size(320,200);
+    Size frameSize = Size(640,480);
     bool showFeatureDetector = true;
     bool showFeatureDescriptor = true;
     int subsampleRate = 0;

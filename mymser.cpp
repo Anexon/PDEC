@@ -1,14 +1,15 @@
 #include "mymser.h"
 
 MyMSER::MyMSER(int _delta, int _min_area, int _max_area,
-               double _max_variation){
+               double _max_variation, float mThreshold){
     this->_delta = _delta;
     this->_min_area = _min_area;
     this->_max_area = _max_area;
     this->_max_variation = _max_variation;
+    this->mThreshold = mThreshold;
 }
 
-void MyMSER::getMSERs(Mat &frame, float mThreshold, vector< vector<Point> > &regions){
+void MyMSER::getMSERs(Mat &frame, vector< vector<Point> > &regions){
 
     MSER ms(_delta,_min_area,_max_area,_max_variation);
     //vector< vector<Point> > regions;

@@ -10,19 +10,25 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <QTextStream>
 
+#include <mymser.h>
+#include <mysift.h>
+
 using namespace cv;
+using namespace std;
 
 class MySVM : public QThread
 {   Q_OBJECT
     private:
-        String datasetFileName;
-        vector<Mat> dataset;
-        VideoCapture capture;
-
-        bool loadDataset(String filename);
+        SVM svm;
+        string datasetFileName;
+        VideoCapture inputVideo;
+        int datasetSize;
+        bool loadDataset(string filename);
+    signals:
+        void updateProgress(int progress, QString format);
     public:
         MySVM(QObject *parent = 0);
-        void execute(String datasetFileName);
+        void train(string datasetFileName);
         ~MySVM();
     protected:
         void run();

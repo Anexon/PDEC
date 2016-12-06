@@ -14,14 +14,15 @@ class MyMSER
 {
     public:
         MyMSER(int _delta=5, int _min_area=60, int _max_area=14400,
-               double _max_variation=0.25);
-        void getMSERs(Mat &frame, float mThreshold, vector< vector<Point> > &regions);
+               double _max_variation=0.25, float mThreshold = 0);
+        void getMSERs(Mat &frame, vector< vector<Point> > &regions);
         void plotMSER(Mat frame, vector< vector<Point> > regions, Mat &processedFrame);
     private:
         int _delta;
         int _min_area;
         int _max_area;
         double _max_variation;
+        float mThreshold;
 };
 
 #endif // MYMSER_H
