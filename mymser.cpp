@@ -55,3 +55,32 @@ void MyMSER::plotMSER(Mat frame, vector< vector<Point> > regions, Mat &processed
         }
     }
 }
+/*
+void MyMSER::toKeyPoints(vector<vector<Point> > regions, vector<KeyPoint> &mserKeyPoints){
+    // Loop for each MSER
+    for(int I=0; I<regions.size(); I++){
+        // Fit region I to ellipse
+        RotatedRect rct = fitEllipse(regions[I]);
+
+        // Get rotation Matrix without scale
+        Mat tMatrix = getRotationMatrix2D(rct.center, rct.angle, 1);
+        // Perform the affine transformation
+        warpAffine();
+        warpedIgray = cv.warpAffine(I, T);
+        %figure, imshow(warpedIgray)
+        %extracting subpixels from warped I
+        rectSub = cv.getRectSubPix(warpedIgray, rct.size+50, rct.center); % always extracting from canonical position
+        %figure,imshow(rectSub);
+
+        %% Normalize Ellipse into circles.
+        x0 = rct.center';
+        a = rct.size(2);%MajorAxisLength;
+        b = rct.size(1);%MinorAxisLength;
+        C = diag([1, b/a]);
+        d = (C)*x0;
+        tform = maketform('affine', [C d; 0 0 1]');
+        rectSubCircle = imtransform(rectSub, tform);
+
+    }
+}
+*/

@@ -31,7 +31,7 @@ class Player : public QThread
      MySIFT mySIFT;
      MySVM* mySVM;
 
-     void plotPredictedRegions(Mat frame, vector<Point> regions, vector<bool> predictions, Mat &processedFrame);
+     void plotPredictedRegions(Mat frame, vector<vector<Point> > regions, vector<bool> predictions, Mat &processedFrame);
  signals:
  //Signal to output frame to be displayed
       void processedImage(const QImage &image);

@@ -61,8 +61,8 @@ void Player::run()
 
         if( frameNum % subsampleRate == 0 || frameNum == 0){
             vector<vector<Point> >      regions;
-            vector<vector<KeyPoint> >   kPointsVect;
-            vector<Mat>                 descriptors;
+            vector<KeyPoint>            kPointsVect;
+            Mat                         descriptors;
             vector<bool>                predictions;
 
             // Start up processed Frame
@@ -93,20 +93,10 @@ void Player::run()
             // Predict detected regions
             cout << "Predicting detected regions...\n";
             cout << "Descriptors Vectors Size: " << descriptors.size() << "\n";
-            for(unsigned K=0; K < descriptors.size(); K++){
-                if(descriptors[K].rows > 0){
-                    float prediction;
-                    mySVM->predictRegions(descriptors[K], prediction);
-                    /**
-                     * If most of the descriptors are tagged as possitive
-                     * lets say this region is a human
-                     */
-                    if( prediction >= 0,5 ) predictions.push_back(true);
-                    else predictions.push_back(false);
-                }
-                plotPredictedRegions(processedFrame, regions[K], predictions, processedFrame);
-                predictions.clear();
-            }
+            mySVM->predictRegions(descriptors, predictions);
+
+            plotPredictedRegions(processedFrame, regions, predictions, processedFrame);
+            predictions.clear();
             //plotPredictedRegions(processedFrame, regions, predictions, processedFrame);
             // Draw frame number
             //plotFrameNumber(processedFrame, frameNum, processedFrame);
@@ -141,11 +131,11 @@ void Player::run()
     processedFrame.release();
 }
 
-void Player::plotPredictedRegions(Mat frame, vector<Point> regions, vector<bool> predictions, Mat &processedFrame){
+void Player::plotPredictedRegions(Mat frame, vector<vector<Point> > regions, vector<bool> predictions, Mat &processedFrame){
     if(!frame.empty()) {
         cout << "Drawing predicted regions...\n";
         for(unsigned j=0; j < regions.size(); j++){
-            //for(unsigned i=0; i < regions[j].size(); i++){
+            for(unsigned i=0; i < regions[j].size(); i++){
                 int color = 0;
                 if(predictions[j]) color = 255;
                 Vec3b intensity;
@@ -153,8 +143,8 @@ void Player::plotPredictedRegions(Mat frame, vector<Point> regions, vector<bool>
                 intensity.val[1] = 0;
                 intensity.val[2] = color;
                 //intensit.val[0] = color
-                frame.at<Vec3b>(regions[j]) = intensity;
-            //}
+                frame.at<Vec3b>(regions[j][i]) = intensity;
+            }
         }
     }
 }

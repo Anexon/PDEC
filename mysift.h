@@ -15,8 +15,8 @@ class MySIFT
 {
 public:
     MySIFT();
-    void getSIFTKps(Mat frame, vector<vector<KeyPoint> > &kPointsVect, vector<Mat> &descriptors, vector<vector<Point> > regions);
-    void drawSIFTKps(Mat frame, vector<vector<KeyPoint> > kPointsVect, Mat &processedFrame);
+    void getSIFTKps(Mat frame, vector<KeyPoint> &kPointsVect, Mat &descriptors, vector<vector<Point> > regions);
+    void drawSIFTKps(Mat frame, vector<KeyPoint> kPointsVect, Mat &processedFrame);
 };
 
 #endif // MYSIFT_H

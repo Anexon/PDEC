@@ -45,18 +45,15 @@ void MySVM::run(){
             myMSER.getMSERs(frame, regions);
 
             // Get Description Vector (SIFT)
-            vector<vector<KeyPoint> >   kPointsVect;
-            vector<Mat> descriptors;
+            vector<KeyPoint>   kPointsVect;
+            Mat descriptors;
             mySIFT.getSIFTKps(frame, kPointsVect, descriptors, regions);
 
             // Save al extracted descriptors
-            for(unsigned J = 0; J < descriptors.size(); J++){
-                for(unsigned K = 0; K < descriptors[J].rows; K++){
-                    globalDescriptorVector.push_back(descriptors[J].row(K));
-                }
+            for(unsigned J = 0; J < descriptors.rows; J++){
+                globalDescriptorVector.push_back(descriptors.row(J));
             }
             regions.clear();
-            descriptors.clear();
             kPointsVect.clear();
         }
         cout << "Global Descriptors Vector Size -> " << globalDescriptorVector.size() << "\n";
@@ -93,12 +90,17 @@ void MySVM::run(){
     }
 }
 
-void MySVM::predictRegions(Mat descriptors, float &predictions){
-    vector<float> result;
+void MySVM::predictRegions(Mat descriptors, vector<bool> &predictions){
     for(int K = 0; K<descriptors.rows; K++){
-        result.push_back(this->svm.predict(descriptors.row(K)));
+        bool prediction;
+        // If prediction is over 0.5 let say it is possitive
+        if(this->svm.predict(descriptors.row(K)) > 0.5){
+            prediction = true;
+        } else {
+            prediction = false;
+        }
+        predictions.push_back(prediction);
     }
-    predictions = mean(result)[0];
 }
 
 MySVM::~MySVM()

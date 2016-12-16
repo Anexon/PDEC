@@ -29,7 +29,7 @@ class MySVM : public QThread
     public:
         MySVM(QObject *parent = 0);
         void train(string datasetFileName);
-        void predictRegions(Mat descriptors, float &predictions);
+        void predictRegions(Mat descriptors, vector<bool> &predictions);
         ~MySVM();
     protected:
         void run();
