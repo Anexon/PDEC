@@ -39,29 +39,29 @@ void MySIFT::getSIFTKps(Mat frame, vector<KeyPoint> &kPointsVect, Mat &descripto
 
                     // Normalize Ellipse
                     Mat keyPointRegion;
-                    Size circleSize(rct.size.width/2, rct.size.width/2);
-                    resize(finalContainer, keyPointRegion, circleSize);
+                    // If rect width or height is less than 2 units, there is not enough rows to proceed with the calc
+                    if(rct.size.width >= 2){
+                        Size circleSize(rct.size.width/2, rct.size.width/2);
 
-                    // Define KeyPoint
-                    vector<KeyPoint> auxKeyPointVector;
-                    // TODO: Crash sometimes
-                    // /build/opencv-cGZqi3/opencv-2.4.9.1+dfsg/modules/imgproc/src/imgwarp.cpp:1835: error: (-215) dsize.area() || (inv_scale_x > 0 && inv_scale_y > 0) in function resize
-                    KeyPoint keyPoint(keyPointRegion.cols/2, keyPointRegion.rows/2, circleSize.width);
-                    auxKeyPointVector.push_back(keyPoint);
-                    // Get descriptors
-                    Mat descriptor;
-                    //sift.detect(frame, extraKeyPoint, mask);
-                    sift.compute(keyPointRegion,auxKeyPointVector, descriptor);
-                    kPointsVect.push_back(keyPoint);
-                    descriptors.push_back(descriptor.row(0));
+                        resize(finalContainer, keyPointRegion, circleSize);
 
-                    // Clear content for next loop
-                    tMatrix.release();
-                    containerTransformed.release();
-                    finalContainer.release();
-                    keyPointRegion.release();
-                    auxKeyPointVector.clear();
-                    descriptor.release();
+                        // Define KeyPoint
+                        vector<KeyPoint> auxKeyPointVector;
+                        KeyPoint keyPoint(keyPointRegion.cols/2, keyPointRegion.rows/2, circleSize.width);
+                        auxKeyPointVector.push_back(keyPoint);
+                        // Get descriptors
+                        Mat descriptor;
+                        sift.compute(keyPointRegion,auxKeyPointVector, descriptor);
+                        kPointsVect.push_back(keyPoint);
+                        descriptors.push_back(descriptor.row(0));
+
+                        // Clear content for next loop
+                        tMatrix.release();
+                        containerTransformed.release();
+                        keyPointRegion.release();
+                        auxKeyPointVector.clear();
+                        descriptor.release();
+                    }
                 }
             }
         }

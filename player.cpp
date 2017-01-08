@@ -86,6 +86,7 @@ void Player::run()
             cout << "Extracting SIFT descriptors...\n";
             mySIFT.getSIFTKps(frameCropped, kPointsVect, descriptors, regions);
             // Show feature descriptor if checkButton is checked
+            cout << "Show SIFT Keypoints...\n";
             if(showFeatureDescriptor){
                 mySIFT.drawSIFTKps(processedFrame, kPointsVect, processedFrame);
             }
