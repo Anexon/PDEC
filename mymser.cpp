@@ -9,7 +9,7 @@ MyMSER::MyMSER(int _delta, int _min_area, int _max_area,
     this->mThreshold = mThreshold;
 }
 
-void MyMSER::getMSERs(Mat &frame, vector< vector<Point> > &regions){
+void MyMSER::getMSERs(Mat &frame, vector< vector<Point> > &regions, vector< KeyPoint> &keyPoints, vector<Mat> &keyPointFrames){
 
     MSER ms(_delta,_min_area,_max_area,_max_variation);
     //vector< vector<Point> > regions;
@@ -34,6 +34,15 @@ void MyMSER::getMSERs(Mat &frame, vector< vector<Point> > &regions){
 
             if( mean(intensityRegion)[0] > mThreshold ){
                 regions.push_back(obtainedRegions[j]);
+                KeyPoint auxKeyPoint;
+                Mat auxKeyPointFrame;
+                toKeyPoint(frame, obtainedRegions[j], auxKeyPoint, auxKeyPointFrame);
+
+                // Avoid empty data
+                if(auxKeyPointFrame.cols > 0 && auxKeyPointFrame.rows > 0){
+                    keyPoints.push_back(auxKeyPoint);
+                    keyPointFrames.push_back(auxKeyPointFrame);
+                }
             }
 
             //regions.push_back(obtainedRegions[j]);
@@ -55,32 +64,62 @@ void MyMSER::plotMSER(Mat frame, vector< vector<Point> > regions, Mat &processed
         }
     }
 }
-/*
-void MyMSER::toKeyPoints(vector<vector<Point> > regions, vector<KeyPoint> &mserKeyPoints){
-    // Loop for each MSER
-    for(int I=0; I<regions.size(); I++){
-        // Fit region I to ellipse
-        RotatedRect rct = fitEllipse(regions[I]);
 
-        // Get rotation Matrix without scale
+void MyMSER::toKeyPoint(Mat &frame, vector<Point> region, KeyPoint &mserKeyPoint, Mat &mserKeyPointFrame){
+    if(!region.empty()){
+        // Get bounding ellipse of region
+        RotatedRect rct = fitEllipse(region);
+
+        // Get rotation matrix without scale
         Mat tMatrix = getRotationMatrix2D(rct.center, rct.angle, 1);
-        // Perform the affine transformation
-        warpAffine();
-        warpedIgray = cv.warpAffine(I, T);
-        %figure, imshow(warpedIgray)
-        %extracting subpixels from warped I
-        rectSub = cv.getRectSubPix(warpedIgray, rct.size+50, rct.center); % always extracting from canonical position
-        %figure,imshow(rectSub);
 
-        %% Normalize Ellipse into circles.
-        x0 = rct.center';
-        a = rct.size(2);%MajorAxisLength;
-        b = rct.size(1);%MinorAxisLength;
-        C = diag([1, b/a]);
-        d = (C)*x0;
-        tform = maketform('affine', [C d; 0 0 1]');
-        rectSubCircle = imtransform(rectSub, tform);
+        // Perform affine transformation
+        Mat containerTransformed;
+        warpAffine(frame, containerTransformed, tMatrix, frame.size());
 
+        if(rct.size.width >= 2 && rct.size.height != 0){
+
+            // Generates bounding ellipse and then bounding rectangle of it
+            RotatedRect rct = fitEllipse(region);
+
+            // Extract Rectangle from Frame
+            Mat rotatedRectangle;
+            getRectSubPix(frame, rct.size, rct.center, rotatedRectangle);
+
+            // Rotate Rectangle
+            Mat verticalRectangle;
+            Mat tMatrix = getRotationMatrix2D(rct.center, rct.angle, 1);
+            warpAffine(rotatedRectangle, verticalRectangle, tMatrix, rotatedRectangle.size());
+            // Apply vertical affine scale
+            Point2f srcQuad[4];
+            Point2f dstQuad[5];
+
+            srcQuad[0] = Point2f( 0,0 );                                                    // Top Left Corner
+            srcQuad[1] = Point2f( verticalRectangle.cols - 1, 0 );                          // Top Right Corner
+            srcQuad[2] = Point2f( 0, verticalRectangle.rows - 1 );                          // Bottom Left Corner
+            srcQuad[2] = Point2f( verticalRectangle.cols - 1, verticalRectangle.rows - 1 ); // Bottom Right Corner
+
+            dstQuad[0] = Point2f( 0, rct.size.width/2 );                                        // Reduce Height of Top Left Corner
+            dstQuad[1] = Point2f( verticalRectangle.cols - 1, rct.size.width/2 );               // Reduce Height of Top Right Corner
+            dstQuad[2] = Point2f( 0, verticalRectangle.rows - 1 );                              // Keep Bottom Left Corner
+            dstQuad[2] = Point2f( verticalRectangle.cols - 1, verticalRectangle.rows - 1 );     // Keep Bottom Right Corner
+
+            // Get the Affine Transform
+            Mat warp_mat;
+            warp_mat = getAffineTransform( srcQuad, dstQuad );
+
+            // Apply Transformation
+            Mat normalizedEllipse;
+            warpAffine( verticalRectangle, normalizedEllipse, warp_mat, verticalRectangle.size() );
+
+            // Define KeyPoint
+            Size circleSize(rct.size.width/2, rct.size.width/2);
+            vector<KeyPoint> auxKeyPointVector;
+            KeyPoint keyPoint(normalizedEllipse.cols/2, normalizedEllipse.rows/2, circleSize.width);
+
+            // Asign KeyPoint
+            mserKeyPoint = keyPoint;
+            mserKeyPointFrame = normalizedEllipse;
+        }
     }
 }
-*/

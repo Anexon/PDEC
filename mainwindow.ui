@@ -130,9 +130,17 @@
          <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0">
           <item>
            <widget class="QComboBox" name="descriptor_combobox">
+            <property name="editable">
+             <bool>false</bool>
+            </property>
             <item>
              <property name="text">
               <string>SIFT</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>FREAK</string>
              </property>
             </item>
            </widget>

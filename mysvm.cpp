@@ -42,19 +42,21 @@ void MySVM::run(){
             inputVideo >> frame;
             // Get MSER regions
             vector<vector<Point> > regions;
-            myMSER.getMSERs(frame, regions);
+            vector<KeyPoint> keyPoints;
+            vector<Mat> keyPointFrames;
+            myMSER.getMSERs(frame, regions, keyPoints, keyPointFrames);
 
             // Get Description Vector (SIFT)
-            vector<KeyPoint>   kPointsVect;
             Mat descriptors;
-            mySIFT.getSIFTKps(frame, kPointsVect, descriptors, regions);
+            mySIFT.getDescriptors(keyPoints, keyPointFrames, descriptors);
 
             // Save al extracted descriptors
             for(unsigned J = 0; J < descriptors.rows; J++){
                 globalDescriptorVector.push_back(descriptors.row(J));
             }
             regions.clear();
-            kPointsVect.clear();
+            keyPoints.clear();
+            keyPointFrames.clear();
         }
         cout << "Global Descriptors Vector Size -> " << globalDescriptorVector.size() << "\n";
 

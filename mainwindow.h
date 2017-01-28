@@ -43,6 +43,8 @@ private slots:
 
     void on_actionTrain_SVM_triggered();
 
+    void on_descriptor_combobox_currentIndexChanged(int index);
+
 private:
     Ui::MainWindow *ui;
     Player* myPlayer;

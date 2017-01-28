@@ -12,6 +12,7 @@
 
 #include <mymser.h>
 #include <mysift.h>
+#include <myfreak.h>
 
 using namespace cv;
 using namespace std;

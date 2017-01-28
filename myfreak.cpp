@@ -1,5 +1,4 @@
-#include "mysift.h"
-
+#include "myfreak.h"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -7,13 +6,13 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/nonfree/features2d.hpp>
 
-MySIFT::MySIFT()
+MyFREAK::MyFREAK()
 {
 
 }
 
-void MySIFT::getDescriptors(vector< KeyPoint> keyPoints, vector<Mat> keyPointFrames, Mat &descriptors){
-    SiftFeatureDetector sift;
+void MyFREAK::getDescriptors(vector< KeyPoint> keyPoints, vector<Mat> keyPointFrames, Mat &descriptors){
+    FREAK freakDescriptor; // Default Settings
 
     for(unsigned i = 0; i < keyPoints.size(); i++){
 
@@ -24,16 +23,20 @@ void MySIFT::getDescriptors(vector< KeyPoint> keyPoints, vector<Mat> keyPointFra
 
         // Generates descriptor of given region
         cout << "\nFrame Size " << keyPointFrames[i].rows << "x" << keyPointFrames[i].cols;
-        sift.compute(keyPointFrames[i], auxKeyPoints, descriptor);
+        freakDescriptor.compute(keyPointFrames[i], auxKeyPoints, descriptor);
+
         // Stores descriptor
+        cout << "\n1";
         descriptors.push_back(descriptor.row(0));
+        cout << "\n1";
 
         descriptor.release();
         auxKeyPoints.clear();
     }
 }
 
-void MySIFT::drawKeyPoints(Mat frame, vector<KeyPoint> kPointsVect, Mat &processedFrame){
+void MyFREAK::drawKeyPoints(Mat frame, vector<KeyPoint> kPointsVect, Mat &processedFrame){
     drawKeypoints(frame, kPointsVect, processedFrame, Scalar::all(-1),
                   DrawMatchesFlags().DRAW_RICH_KEYPOINTS );
 }
+

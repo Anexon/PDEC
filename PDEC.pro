@@ -20,14 +20,16 @@ SOURCES += main.cpp\
     player.cpp \
     mysvm.cpp \
     mymser.cpp \
-    mysift.cpp
+    mysift.cpp \
+    myfreak.cpp
 
 HEADERS  += mainwindow.h \
     OculusTI.h \
     player.h \
     mysvm.h \
     mymser.h \
-    mysift.h
+    mysift.h \
+    myfreak.h
 
 FORMS    += mainwindow.ui
 

@@ -1,5 +1,5 @@
-#ifndef MYSIFT_H
-#define MYSIFT_H
+#ifndef MYFREAK_H
+#define MYFREAK_H
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -11,12 +11,13 @@
 using namespace cv;
 using namespace std;
 
-class MySIFT
+class MyFREAK
 {
 public:
-    MySIFT();
+    MyFREAK();
     void getDescriptors(vector< KeyPoint> keyPoints, vector<Mat> keyPointFrames, Mat &descriptors);
     void drawKeyPoints(Mat frame, vector<KeyPoint> kPointsVect, Mat &processedFrame);
+
 };
 
-#endif // MYSIFT_H
+#endif // MYFREAK_H

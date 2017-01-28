@@ -138,3 +138,20 @@ void MainWindow::on_actionTrain_SVM_triggered()
             tr("Text Files (*.avi *.mpg *.mp4)"));
     mySVM->train(fileName.toLocal8Bit().data());
 }
+
+void MainWindow::on_descriptor_combobox_currentIndexChanged(int index)
+{
+    // Descriptor changed
+    switch (index) {
+    case 0:
+        myPlayer->setDescriptor(Player::DESCRIPTORS::SIFT);
+        cout << "SIFT Descriptor Selected";
+        break;
+    case 1:
+        myPlayer->setDescriptor(Player::DESCRIPTORS::FREAK);
+        cout << "FREAK Descriptor Selected";
+        break;
+    default:
+        break;
+    }
+}

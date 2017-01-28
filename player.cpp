@@ -7,7 +7,9 @@ Player::Player(QObject *parent)
 {
     myMSER = MyMSER(4,60,600,0.25,150);
     mySIFT = MySIFT();
+    myFREAK = MyFREAK();
     stop = true;
+    descriptorSelected = DESCRIPTORS::SIFT;
 }
 
 QTextStream& qStdOut()
@@ -60,10 +62,11 @@ void Player::run()
         }
 
         if( frameNum % subsampleRate == 0 || frameNum == 0){
-            vector<vector<Point> >      regions;
-            vector<KeyPoint>            kPointsVect;
-            Mat                         descriptors;
-            vector<bool>                predictions;
+            vector<vector<Point> >  regions;
+            Mat                     descriptors;
+            vector< KeyPoint>       keyPoints;
+            vector< Mat>            keyPointFrames;
+            vector<bool>            predictions;
 
             // Start up processed Frame
             resize(frame,frameResized, frameSize);
@@ -75,25 +78,24 @@ void Player::run()
 
 
             // Get MSER Regions
-            cout << "Extracting MSERs...\n";
-            myMSER.getMSERs(processedFrame, regions);
+            cout << "\nExtracting MSERs...";
+            myMSER.getMSERs(processedFrame, regions, keyPoints, keyPointFrames);
             // Show feature detector if checkButton is checked
             if(showFeatureDetector){
                 myMSER.plotMSER(frameCropped, regions, processedFrame);
             }
 
             // Get Descritors from SIFT Descriptor and draw keypoints into processed frame
-            cout << "Extracting SIFT descriptors...\n";
-            mySIFT.getSIFTKps(frameCropped, kPointsVect, descriptors, regions);
+            cout << "\nExtracting descriptors...";
+            getDescriptors(keyPoints, keyPointFrames, descriptors);
+
             // Show feature descriptor if checkButton is checked
-            cout << "Show SIFT Keypoints...\n";
             if(showFeatureDescriptor){
-                mySIFT.drawSIFTKps(processedFrame, kPointsVect, processedFrame);
+                drawDescriptors(processedFrame, keyPoints, processedFrame);
             }
 
             // Predict detected regions
             cout << "Predicting detected regions...\n";
-            cout << "Descriptors Vectors Size: " << descriptors.size() << "\n";
             mySVM->predictRegions(descriptors, predictions);
 
             plotPredictedRegions(processedFrame, regions, predictions, processedFrame);
@@ -150,8 +152,38 @@ void Player::plotPredictedRegions(Mat frame, vector<vector<Point> > regions, vec
     }
 }
 
+void Player::getDescriptors(vector<KeyPoint> keyPoints, vector<Mat> keyPointFrames, Mat &descriptors){
+    switch (descriptorSelected) {
+        case SIFT:
+            mySIFT.getDescriptors(keyPoints, keyPointFrames, descriptors);
+            break;
+        case FREAK:
+            myFREAK.getDescriptors(keyPoints, keyPointFrames, descriptors);
+            break;
+        default:
+            break;
+    }
+}
+
+void Player::drawDescriptors(Mat processedFrame, vector<KeyPoint> keyPoints, Mat &procFrame){
+    switch (descriptorSelected) {
+        case SIFT:
+            mySIFT.drawKeyPoints(processedFrame, keyPoints, procFrame);
+            break;
+        case FREAK:
+            myFREAK.drawKeyPoints(processedFrame, keyPoints, procFrame);
+            break;
+        default:
+            break;
+    }
+}
+
 void Player::setSVM(MySVM* mySVM){
     this->mySVM = mySVM;
+}
+
+void Player::setDescriptor(DESCRIPTORS descriptor){
+    this->descriptorSelected = descriptor;
 }
 
 Player::~Player()
