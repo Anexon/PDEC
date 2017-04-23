@@ -67,21 +67,11 @@ void MyMSER::plotMSER(Mat frame, vector< vector<Point> > regions, Mat &processed
 
 void MyMSER::toKeyPoint(Mat &frame, vector<Point> region, KeyPoint &mserKeyPoint, Mat &mserKeyPointFrame){
     if(!region.empty()){
-        // Get bounding ellipse of region
+        // Generates bounding ellipse and then bounding rectangle of it
         RotatedRect rct = fitEllipse(region);
 
-        // Get rotation matrix without scale
-        Mat tMatrix = getRotationMatrix2D(rct.center, rct.angle, 1);
-
-        // Perform affine transformation
-        Mat containerTransformed;
-        warpAffine(frame, containerTransformed, tMatrix, frame.size());
 
         if(rct.size.width >= 2 && rct.size.height != 0){
-
-            // Generates bounding ellipse and then bounding rectangle of it
-            RotatedRect rct = fitEllipse(region);
-
             // Extract Rectangle from Frame
             Mat rotatedRectangle;
             getRectSubPix(frame, rct.size, rct.center, rotatedRectangle);
@@ -89,7 +79,9 @@ void MyMSER::toKeyPoint(Mat &frame, vector<Point> region, KeyPoint &mserKeyPoint
             // Rotate Rectangle
             Mat verticalRectangle;
             Mat tMatrix = getRotationMatrix2D(rct.center, rct.angle, 1);
+            // TODO: Oppisite angle should be applid (?)
             warpAffine(rotatedRectangle, verticalRectangle, tMatrix, rotatedRectangle.size());
+
             // Apply vertical affine scale
             Point2f srcQuad[4];
             Point2f dstQuad[5];
@@ -114,12 +106,23 @@ void MyMSER::toKeyPoint(Mat &frame, vector<Point> region, KeyPoint &mserKeyPoint
 
             // Define KeyPoint
             Size circleSize(rct.size.width/2, rct.size.width/2);
-            vector<KeyPoint> auxKeyPointVector;
-            KeyPoint keyPoint(normalizedEllipse.cols/2, normalizedEllipse.rows/2, circleSize.width);
+            // KeyPoint keyPoint(normalizedEllipse.cols/2, normalizedEllipse.rows/2, circleSize.width);
+            // Determine response of MSER
+            float response = evaluateResponse(region, frame);
+            KeyPoint keyPoint(normalizedEllipse.cols/2, normalizedEllipse.rows/2, circleSize.width, 0, response);
 
             // Asign KeyPoint
             mserKeyPoint = keyPoint;
             mserKeyPointFrame = normalizedEllipse;
         }
     }
+}
+
+float MyMSER::evaluateResponse(vector<Point> region, Mat frame){
+    vector<Vec3b> intensityRegion;
+    for(unsigned i=0; i < region.size(); i++){
+        Vec3b intensityPixel = frame.at<Vec3b>(region[i]);
+        intensityRegion.push_back( intensityPixel );
+    }
+    return mean(intensityRegion)[0];
 }

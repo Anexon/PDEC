@@ -24,6 +24,7 @@ class MyMSER
         int _max_area;
         double _max_variation;
         float mThreshold;
+        float evaluateResponse(vector<Point> region, Mat frame);
 };
 
 #endif // MYMSER_H
