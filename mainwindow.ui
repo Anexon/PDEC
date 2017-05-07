@@ -159,6 +159,32 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="showGroundTruthBox">
+         <property name="title">
+          <string>Ground Truth</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QLabel" name="showGroundTruthLable">
+            <property name="text">
+             <string>Show GroundTruth </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="showGroundTruthCheck">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -197,6 +223,7 @@
      <string>Options</string>
     </property>
     <addaction name="actionTrain_SVM"/>
+    <addaction name="actionLoad_GroundTruth"/>
    </widget>
    <addaction name="menuPDEC"/>
    <addaction name="menuOptions"/>
@@ -223,6 +250,11 @@
   <action name="actionTrain_SVM">
    <property name="text">
     <string>Train SVM</string>
+   </property>
+  </action>
+  <action name="actionLoad_GroundTruth">
+   <property name="text">
+    <string>Load GroundTruth</string>
    </property>
   </action>
  </widget>

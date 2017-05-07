@@ -1,11 +1,13 @@
 #include "player.h"
 #include "OculusTI.h"
 #include <QTextStream>
+#include <QFile>
+#include <QRegularExpression>
 
 Player::Player(QObject *parent)
  : QThread(parent)
 {
-    myMSER = MyMSER(4,60,600,0.25,150);
+    myMSER = MyMSER(0.8,60,16000,0.8,150);
     mySIFT = MySIFT();
     myFREAK = MyFREAK();
     stop = true;
@@ -20,6 +22,8 @@ QTextStream& qStdOut()
 
 
 bool Player::loadVideo(String filename) {
+    cout << filename;
+
     capture.open(filename);
     if (capture.isOpened())
     {
@@ -28,6 +32,10 @@ bool Player::loadVideo(String filename) {
     }
     else
         return false;
+}
+
+void Player::loadGroundTruth(string groundTruthFileName){
+    this->groundTruthFileName = groundTruthFileName;
 }
 
 void Player::Play()
@@ -42,6 +50,21 @@ void Player::Play()
 
 void Player::run()
 {
+    QFile file(groundTruthFileName.data());
+    QTextStream groundTruthIn(&file);
+    if(file.open(QIODevice::ReadOnly)) {
+        cout << "\nAbriendo archivo \n";
+        bool dataReady = false;
+        while(!groundTruthIn.atEnd() && !dataReady) {
+            QString line = groundTruthIn.readLine();
+            QStringList fields = line.split("%");
+            if(fields.length() < 2){
+                dataReady = true;
+                cout << "Imágenes: " << line.toStdString() << "\n";
+            }
+        }
+    }
+
     int delay = (1000/frameRate);
     int frameNum = 0;
 
@@ -92,6 +115,19 @@ void Player::run()
             // Show feature descriptor if checkButton is checked
             if(showFeatureDescriptor){
                 drawDescriptors(processedFrame, keyPoints, processedFrame);
+            }
+
+            if(showGroundTruth){
+                QString line = groundTruthIn.readLine();
+                cout << "\nImagen: " << line.toStdString();
+                QRegularExpression re("(\\(|\\)\\ )");
+
+                QStringList data = line.split(re);
+                for(int i=1; i<data.length(); i++){
+                    cout << "Rect " << i << ": " << data[i].toStdString() << "\n";
+                }
+
+                //drawGroundTruth(processedFrame, groundTruthBoxes);
             }
 
             // Predict detected regions

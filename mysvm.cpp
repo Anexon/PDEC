@@ -26,7 +26,7 @@ void MySVM::train(string datasetFileName){
 
 void MySVM::run(){
     // Init MSER and SIFT objects
-    MyMSER myMSER = MyMSER(4,60,600,0.25,150);
+    MyMSER myMSER = MyMSER(0.8,60,16000,0.8,150);
     MySIFT mySIFT = MySIFT();
 
     if(loadDataset(datasetFileName)){

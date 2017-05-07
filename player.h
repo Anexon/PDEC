@@ -30,6 +30,7 @@ class Player : public QThread
     Size frameSize = Size(800,600);
     bool showFeatureDetector = true;
     bool showFeatureDescriptor = true;
+    bool showGroundTruth = true;
     bool subsampleRateCheck = false;
     int subsampleRate = 0;
 
@@ -39,6 +40,8 @@ class Player : public QThread
     void setSVM(MySVM* mySVM);
     //Set Descriptor
     void setDescriptor(DESCRIPTORS descriptor);
+    // Set GroundTruth filename
+    void loadGroundTruth(string groundTruthFileName);
     //Play the video
     void Play();
     //Stop the video
@@ -62,6 +65,7 @@ class Player : public QThread
      MyFREAK myFREAK;
      MySVM* mySVM;
      DESCRIPTORS descriptorSelected;
+     String groundTruthFileName;
 
      void plotPredictedRegions(Mat frame, vector<vector<Point> > regions, vector<bool> predictions, Mat &processedFrame);
      void getDescriptors(vector<KeyPoint> keyPoints, vector<Mat> keyPointFrames, Mat &descriptors);

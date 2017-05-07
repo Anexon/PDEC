@@ -43,7 +43,11 @@ private slots:
 
     void on_actionTrain_SVM_triggered();
 
+    void on_actionLoad_GroundTruth_triggered();
+
     void on_descriptor_combobox_currentIndexChanged(int index);
+
+    void on_showGroundTruthCheck_clicked();
 
 private:
     Ui::MainWindow *ui;

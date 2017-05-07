@@ -111,9 +111,23 @@ void MainWindow::on_descriptor_show_clicked()
     }
 }
 
+
+void MainWindow::on_showGroundTruthCheck_clicked()
+{
+    if(myPlayer->showFeatureDescriptor){
+        myPlayer->showFeatureDescriptor = false;
+    } else {
+        myPlayer->showFeatureDescriptor = true;
+    }
+}
+
 void MainWindow::on_descriptor_combobox_activated(const QString &arg1)
 {
-
+    if(myPlayer->showGroundTruth){
+        myPlayer->showGroundTruth = false;
+    } else {
+        myPlayer->showGroundTruth = true;
+    }
 }
 
 void MainWindow::on_subsampleRateCheckBox_clicked(bool checked)
@@ -137,6 +151,13 @@ void MainWindow::on_actionTrain_SVM_triggered()
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), QString(),
             tr("Text Files (*.avi *.mpg *.mp4)"));
     mySVM->train(fileName.toLocal8Bit().data());
+}
+
+void MainWindow::on_actionLoad_GroundTruth_triggered(){
+
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), QString(),
+            tr("Text Files (*.txt *.json)"));
+    myPlayer->loadGroundTruth(fileName.toLocal8Bit().data());
 }
 
 void MainWindow::on_descriptor_combobox_currentIndexChanged(int index)

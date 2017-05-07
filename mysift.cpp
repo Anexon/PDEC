@@ -23,7 +23,7 @@ void MySIFT::getDescriptors(vector< KeyPoint> keyPoints, vector<Mat> keyPointFra
         auxKeyPoints.push_back(keyPoints[i]);
 
         // Generates descriptor of given region
-        cout << "\nFrame Size " << keyPointFrames[i].rows << "x" << keyPointFrames[i].cols;
+        // cout << "\nFrame Size " << keyPointFrames[i].rows << "x" << keyPointFrames[i].cols;
         sift.compute(keyPointFrames[i], auxKeyPoints, descriptor);
         // Stores descriptor
         descriptors.push_back(descriptor.row(0));
